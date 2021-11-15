@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cari Hesap Hareketleri</title>
+<th:block th:insert="~{fragments/template :: link}"></th:block>
+</head>
+<body>
+
+	<th:block th:replace="~{fragments/template :: navbar}"></th:block>
+	
+	<div class="container">
+	
+		<div class="row">
+			<div class="col">
+				<h1 th:text="${company.name}"></h1>
+			</div>
+			<div class="col">
+				<div class="float-end">
+					<p>Alacağı : <span class="fw-bold text-primary" th:text="${company.borrow}"></span></p>
+					<p>Borcu : <span class="fw-bold text-danger" th:text="${company.loan}"></span></p>
+					<p>Bakiye : <span class="fw-bold text-success" th:text="${company.balance}"></span></p>
+					<p>Bakiye Durum : <span class="fw-bold" th:text="${company.findBalanceState(company.balance)}"></span></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col">
+				<a href="#" th:href="@{'/cariHareketEkle?cariHesapId=' + ${company.id}}" class="btn btn-primary">Cari Hareket Ekle</a>
+			</div>
+		</div>
+		
+		<th:block th:replace="~{fragments/template :: resultMassage}"></th:block>
+		
+		<div id="movementsTable">
+			<input type="search" class="fuzzy-search noExport" placeholder="Arama...">
+			<table class="table table-hover">
+				<caption>Cari Hareketler</caption>
+				<thead>
+					<tr>
+						<th class="sort" data-sort="date" scope="col">Tarih</th>
+						<th class="sort" data-sort="productType" scope="col">Cinsi</th>
+						<th class="sort" data-sort="mode" scope="col">İşlem Şekli</th>
+						<th scope="col">Açıklama</th>
+						<th class="sort" data-sort="quantity" scope="col">Miktar</th>
+						<th class="sort" data-sort="unit" scope="col">Birim</th>
+						<th class="sort" data-sort="unitPrice" scope="col">Birim Fiyat</th>
+						<th class="sort" data-sort="amount" scope="col">İşlem Tutarı</th>
+						<th class="sort" data-sort="type" scope="col"></th>
+						<th scope="col">Bakiye</th>
+						<th class="noExport" scope="col" style="width: 105px;"></th>
+						<th class="noExport" scope="col" style="width: 105px;"></th>
+					</tr>
+				</thead>
+				<tbody class="list">
+					<tr class="movementElement" th:each="movement : ${companyMovements}">
+						<td class="date" th:attrappend="data-timestamp=@{${movement.dataTimestamp}}" th:text="${{movement.date}}">Tarih</td>
+						<td class="productType" th:text="${movement.productType}">Cinsi</td>
+						<td class="mode" th:text="${movement.mode}">İşlem Şekli</td>
+						<td th:text="${movement.desc}">Açıklama</td>
+						<td class="quantity" th:text="${movement.quantity}">Miktar</td>
+						<td class="unit" th:text="${movement.unit}">Birim</td>
+						<td class="unitPrice" th:text="${movement.unitPrice}">Birim Fiyat</td>
+						<td class="amount" th:text="${movement.amount}">İşlem Tutarı</td>
+						<td class="type" th:text="${movement.type}">-</td>
+						<th scope="row" th:text="${movement.balance}">Bakiye</th>
+						<td class="noExport">
+							<a href="#" th:href="@{'/cariHareketDuzenle?cariHesapId=' + ${company.id} + '&encId=' + ${movement.id}}" class="btn btn-secondary">Güncelle</a>
+						</td>
+						<td class="noExport">
+							<a href="#" th:href="@{'/cariHareketSil?cariHesapId=' + ${company.id} + '&encId=' + ${movement.id}}" class="btn btn-danger" 
+								onclick="return confirm('Kaydı simek istediğinize emin misiniz?');">
+								Kaydı Sil
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<ul class="pagination noExport"></ul>
+		</div>
+		
+		<div class="row">
+			<div class="col">
+				<button id="btnExport" class="btn btn-primary mb-2">Excel</button>
+				<button id="btnPrint" class="btn btn-primary mb-2">Yazdır</button>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:insert="~{fragments/template :: footer}"></th:block>
+
+	<th:block th:insert="~{fragments/template :: body/script}"></th:block>
+	
+	<script th:src="@{/assets/listjs/list.min.js}"></script>
+	
+	<script th:src="@{/assets/table2excel/jquery.table2excel.min.js}"></script>
+	
+	<script th:src="@{/js/movements.js}"></script>
+</body>
+</html>

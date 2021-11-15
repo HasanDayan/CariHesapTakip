@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cari Hareket Düzenle</title>
+<th:block th:insert="~{fragments/template :: link}"></th:block>
+</head>
+<body>
+
+	<th:block th:replace="~{fragments/template :: navbar}"></th:block>
+	
+	<div class="container">
+	
+		<div class="row">
+			<div class="col-6">
+				<th:block th:replace="~{fragments/template :: resultMassage}"></th:block>
+				
+				<form action="#" th:action="@{/cariHareketDuzenle}" method="post" th:object="${movement}">
+					<div class="form-group mt-5 mb-2">
+						<label for="date">Tarih</label>
+						<input type="date" required="required" class="form-control" th:field="*{date}" placeholder="İşlem Tarihi" />
+					</div>
+					<div class="form-group mb-2">
+						<label for="productType">Cinsi</label>
+						<input type="text" class="form-control" th:field="*{productType}" placeholder="Cinsi" />
+					</div>
+					<div class="form-group mb-2">
+						<label for="type">İşlem Türü</label>
+						<select required="required" class="form-control" th:field="*{type}">
+						  <option value="">Seçiniz</option>
+						  <option th:each="type : ${T(com.hasandayan.cari.enums.MovementType).values()}" th:value="${type}" th:text="${type.value}"></option>
+						</select>
+					</div>
+					<div class="form-group mb-2">
+						<label for="mode">İşlem Şekli</label>
+						<select class="form-control" th:field="*{mode}">
+						  <option value="">Seçiniz</option>
+						  <option th:each="mode : ${T(com.hasandayan.cari.enums.MovementMode).values()}" th:value="${mode}" th:text="${mode.value}"></option>
+						</select>
+					</div>
+					<div class="form-group mb-2">
+						<label for="desc">Açıklama</label>
+						<textarea class="form-control" rows="3" cols="80" th:field="*{desc}"></textarea>
+					</div>
+					<div class="form-group mb-2">
+						<label for="quantity">Miktar</label>
+						<input type="number" class="form-control" th:field="*{quantity}" placeholder="Miktar" step="any" />
+					</div>
+					<div class="form-group mb-2">
+						<label for="unit">Birim</label>
+						<input type="text" class="form-control" th:field="*{unit}" placeholder="Birim" />
+					</div>
+					<div class="form-group mb-2">
+						<label for="unitPrice">Birim Tutarı</label>
+						<input type="number" class="form-control" th:field="*{unitPrice}" placeholder="Birim Tutarı" step="any" />
+					</div>
+					<div class="form-group mb-2">
+						<label for="amount">İşlem Tutarı</label>
+						<input required="required" type="number" class="form-control" th:field="*{amount}" placeholder="İşlem Tutarı" step="any" />
+					</div>
+					
+					<input type="hidden" th:field="*{companyId}" />
+					<input type="hidden" th:field="*{id}" />
+					<button type="submit" class="btn btn-primary mb-2">Güncelle</button>
+				</form>
+			</div>
+		</div>
+	
+	</div>
+	
+	<th:block th:insert="~{fragments/template :: footer}"></th:block>
+
+	<th:block th:insert="~{fragments/template :: body/script}"></th:block>
+	
+	<script th:inline="javascript">
+		$(document).ready(function(){
+		    $("#quantity").change(function() {
+		    	var quantity = $(this).val();
+		    	var unitPrice = $("#unitPrice").val();
+		    	
+		    	$("#amount").val( (parseFloat(quantity) * parseFloat(unitPrice)).toFixed(2) );
+		    });
+		    
+			$("#unitPrice").change(function() {
+				var quantity = $("#quantity").val();
+		    	var unitPrice = $(this).val();
+		    	
+		    	$("#amount").val( (parseFloat(quantity) * parseFloat(unitPrice)).toFixed(2) );
+		    });
+		});
+		
+
+		$( function() {
+		    var availableUnits = [[${units}]];
+		    
+		    $( "#unit" ).autocomplete({
+		      source: availableUnits
+		    });
+		    
+		    var availableTypes = [[${types}]];
+		    
+		    $( "#productType" ).autocomplete({
+		      source: availableTypes
+		    });
+		 } );
+	</script>
+
+</body>
+</html>
