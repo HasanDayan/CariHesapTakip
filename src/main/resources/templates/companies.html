@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cari Hesaplar</title>
+<th:block th:insert="~{fragments/template :: link}"></th:block>
+</head>
+<body>
+
+	<th:block th:replace="~{fragments/template :: navbar}"></th:block>
+
+	<div class="container">
+		
+		<div class="row">
+			<div class="class-md-12">
+				<a href="#" th:href="@{/cariHesapEkle}" class="btn btn-primary mt-5">Cari Hesap Ekle</a>
+			</div>
+		</div>
+		
+		<th:block th:replace="~{fragments/template :: resultMassage}"></th:block>
+		
+		<div id="companiesTable">
+			<input type="search" class="fuzzy-search" placeholder="Arama...">
+			<table class="table table-hover">
+				<caption>Cari Hesaplar</caption>
+				<thead>
+					<tr>
+						<th class="sort" data-sort="name" scope="col">Cari Ünvan</th>
+						<th class="sort" data-sort="official" scope="col">Yetkili</th>
+						<th class="sort" data-sort="group" scope="col">Grubu</th>
+						<th class="sort" data-sort="loan" scope="col">Borç</th>
+						<th class="sort" data-sort="borrow" scope="col">Alacak</th>
+						<th class="sort" data-sort="balance" scope="col">Bakiye</th>
+						<th scope="col"></th>
+						<th scope="col" style="width: 105px;"></th>
+						<th scope="col" style="width: 105px;"></th>
+					</tr>
+				</thead>
+				<tbody class="list">
+					<tr class="companyElement" th:each="company : ${companies}" th:data-id="${company.id}" onclick="rowClicked(this.getAttribute('data-id'))">
+						<td class="name" th:text="${company.name}">Ad</td>
+						<td class="official" th:text="${company.official}">Yetkili</td>
+						<td class="group" th:text="${company.group}">Grubu</td>
+						<td class="text-danger loan" th:text="${{company.loan}}">Borç</td>
+						<td class="text-primary borrow" th:text="${{company.borrow}}">Alacak</td>
+						<th class="balance" scope="row" th:classappend="${company.findColorClass(company.balance)}" th:text="${{company.balance}}">Bakiye</th>
+						<td th:text="${company.findMovementType(company.balance)}">-</td>
+						<td>
+							<a href="#" th:href="@{'/cariHesapDuzenle/' + ${company.id}}" class="btn btn-secondary">Güncelle</a>
+						</td>
+						<td>
+							<a href="#" th:href="@{'/cariHesapSil/' + ${company.id}}" class="btn btn-danger" 
+								onclick="return confirm('Kaydı simek istediğinize emin misiniz?');">
+								Kaydı Sil
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<ul class="pagination"></ul>
+		</div>
+	</div>
+	
+
+	<th:block th:insert="~{fragments/template :: footer}"></th:block>
+
+	<th:block th:insert="~{fragments/template :: body/script}"></th:block>
+	
+	<script th:src="@{/assets/listjs/list.min.js}"></script>
+	
+	<script type="text/javascript">
+		function rowClicked(value) {
+	        location.href = "/cariHesapHareketleri?cariHesapId=" + value;
+	    }
+		
+		if ( $('.companyElement').length > 0 ) {
+			var companyList = new List('companiesTable', {
+				valueNames : [ 'name', 'official', 'group', 'loan', 'borrow', 'balance' ],
+				page : 10000,
+				pagination : [{
+					paginationClass: "pagination",
+					innerWindow: 1,
+					right:0,
+					left:0
+				}]
+			});
+			
+			if((companyList.size() / companyList.page) <= 1) {
+			    $('.pagination').hide();
+			}
+		}
+	</script>
+</body>
+</html>
