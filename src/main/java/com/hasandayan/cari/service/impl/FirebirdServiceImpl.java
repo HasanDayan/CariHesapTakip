@@ -11,11 +11,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.firebirdsql.jdbc.field.TypeConversionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hasandayan.cari.entity.Company;
 import com.hasandayan.cari.entity.CompanyMovement;
